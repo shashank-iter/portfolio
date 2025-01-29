@@ -1,0 +1,76 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+
+export const meta = {
+  author: 'Shashank Pandey',
+  date: '2024-03-24',
+  title: 'Understanding Aggregation Pipelines in MongoDB',
+  description:
+    'A beginner-friendly explanation of MongoDB Aggregation Pipelines using simple analogies.',
+}
+
+export default (props) => <ArticleLayout meta={meta} {...props} />
+
+## What are Aggregation Pipelines in MongoDB?
+
+At first, it may seem like a complex term, but let's simplify it.
+
+While working with MongoDB, we usually read and write data into the database. However, for complex applications that require data analysis, Aggregation Pipelines come into the picture.
+
+### Simplified Analogy
+
+Imagine you have a bunch of toys, and you want to:
+- **Group** them by color,
+- **Count** how many toys you have of each color,
+- **Sort** them by the number of toys.
+
+Aggregation pipelines allow you to do just that with your data in MongoDB.
+
+### How It Works
+
+Each step in the pipeline is like a specific action performed on the data:
+
+1. **Grouping**: Group the toys by color.
+2. **Counting**: Count how many toys you have of each color.
+3. **Sorting**: Arrange the colors based on the number of toys.
+
+Each step takes the output of the previous step and performs a specific operation on it.
+
+### Key Features
+
+With aggregation pipelines, you can:
+- **Group data** based on certain fields.
+- **Calculate results** using multiple fields.
+- **Filter data** to extract only relevant information.
+- **Sort data** for better organization.
+
+### Writing an Aggregation Pipeline
+
+To use aggregation pipelines, you write a series of **stages**, where each stage represents a step in the pipeline. Each stage performs operations like filtering, grouping, and calculating. The output of one stage becomes the input for the next stage until you reach the final result.
+
+### Code Example
+
+```javascript
+const { MongoClient } = require('mongodb');
+
+async function runAggregation() {
+  const client = new MongoClient('mongodb://localhost:27017');
+  await client.connect();
+  const database = client.db('mydb');
+  const collection = database.collection('toys');
+
+  const pipeline = [
+    { $group: { _id: "$color", count: { $sum: 1 } } },
+    { $sort: { count: -1 } }
+  ];
+
+  const result = await collection.aggregate(pipeline).toArray();
+  console.log(result);
+  await client.close();
+}
+
+runAggregation().catch(console.dir);
+```
+
+### Conclusion
+
+MongoDB Aggregation Pipelines are a powerful tool that helps you organize and analyze data in a structured way, just like organizing and counting toys by color.

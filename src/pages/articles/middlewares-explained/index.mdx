@@ -1,0 +1,58 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+
+export const meta = {
+  author: 'Shashank Pandey',
+  date: '2024-05-05',
+  title: 'Understanding Middleware in Simple Terms',
+  description:
+    'A simple analogy to understand how middleware functions in a server-side application.',
+}
+
+export default (props) => <ArticleLayout meta={meta} {...props} />
+
+## What is Middleware?
+
+Let's understand it in a simple way:
+
+You have planned to go for a bike ride in the evening with your friend.
+
+You requested your father to allow you to go for that ride. Your father said, "Okay, you can go, but meet your mother before going for a ride."
+
+You go to meet your mother, and she hands you over a **helmet** that you must have in order to go for a ride.
+
+You then go, complete the ride with the helmet. 
+
+### Understanding the Analogy
+
+- You **asking** to go for a bike ride is a **request** sent to the server.
+- Your **father** is the **server** that accepts the request and decides what to do next.
+- Your **mother** acts as a **middleware** that processes the request before passing it forward.
+- Your **friend** taking you on a ride is the **controller** or the function executing the main task.
+
+### Role of Middleware
+
+Middleware adds essential information to the request before it reaches the controller. For example:
+
+- In a **Node.js** application, to upload a file to a CDN, we first accept files from the frontend.
+- **Express.js** itself doesn't handle file uploads.
+- We use **multer** as a middleware to inject files into the request body.
+- The controller can then access and process the uploaded file.
+
+### Code Example
+
+```javascript
+const express = require('express');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
+
+const app = express();
+
+// Middleware to handle file upload
+app.post('/upload', upload.single('file'), (req, res) => {
+  res.send(`File uploaded: ${req.file.filename}`);
+});
+
+app.listen(3000, () => console.log('Server running on port 3000'));
+```
+
+Middleware functions execute before the controller, modifying the request as needed. Hope this explanation clarifies the concept!

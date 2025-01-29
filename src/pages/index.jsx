@@ -25,6 +25,106 @@ import { generateRssFeed } from '@/lib/generateRssFeed'
 import { getAllArticles } from '@/lib/getAllArticles'
 import { formatDate } from '@/lib/formatDate'
 
+const techLogosArray = [
+  {
+    tech: 'Javascript',
+
+    logo: <i className="ci ci-js h-6 w-6"></i>,
+  },
+  {
+    tech: 'Typescript',
+
+    logo: <i className="ci ci-ts h-6 w-6"></i>,
+  },
+  {
+    tech: 'Java',
+
+    logo: <i className="ci ci-java h-6 w-6"></i>,
+  },
+  { tech: 'C', logo: <i className="ci ci-c h-6 w-6"></i> },
+  {
+    tech: 'Python',
+
+    logo: <i className="ci ci-python h-6 w-6"></i>,
+  },
+  {
+    tech: 'MongoDB',
+
+    logo: <i className="ci ci-mongodb h-6 w-6"></i>,
+  },
+  {
+    tech: 'Next JS',
+
+    logo: <i className="ci ci-nextjs h-6 w-6"></i>,
+  },
+  {
+    tech: 'React JS',
+
+    logo: <i className="ci ci-reactjs h-6 w-6"></i>,
+  },
+  {
+    tech: 'Redux',
+
+    logo: <i className="ci ci-redux h-6 w-6"></i>,
+  },
+  {
+    tech: 'Express JS',
+
+    logo: <i className="ci ci-expressjs h-6 w-6"></i>,
+  },
+  {
+    tech: 'Node JS',
+
+    logo: <i className="ci ci-nodejs h-6 w-6"></i>,
+  },
+  {
+    tech: 'Tailwind',
+
+    logo: <i className="ci ci-tailwind h-6 w-6"></i>,
+  },
+  {
+    tech: 'Framer',
+
+    logo: <i className="ci ci-framer-motion pn"></i>,
+  },
+  {
+    tech: 'Postman',
+
+    logo: <i className="ci ci-postman h-6 w-6"></i>,
+  },
+  {
+    tech: 'Supabase',
+
+    logo: <i className="ci ci-supabase h-6 w-6"></i>,
+  },
+  {
+    tech: 'Firebase',
+
+    logo: <i className="ci ci-firebase h-6 w-6"></i>,
+  },
+
+  {
+    tech: 'SQL',
+
+    logo: <i className="ci ci-mysql"></i>,
+  },
+  {
+    tech: 'Git',
+
+    logo: <i className="ci ci-git h-6 w-6"></i>,
+  },
+  {
+    tech: 'Github',
+
+    logo: <i className="ci ci-github h-6 w-6"></i>,
+  },
+  {
+    tech: 'Figma',
+
+    logo: <i className="ci ci-figma h-6 w-6"></i>,
+  },
+]
+
 function MailIcon(props) {
   return (
     <svg
@@ -109,30 +209,20 @@ function SocialLink({ icon: Icon, ...props }) {
 
 function Newsletter() {
   return (
-    <form
-      action="/thank-you"
-      className="rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40"
-    >
+    <div className="rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40">
       <h2 className="flex text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-        <MailIcon className="h-6 w-6 flex-none" />
-        <span className="ml-3">Stay up to date</span>
+        {/* <MailIcon className="h-6 w-6 flex-none" /> */}
+        <span className="">Technologies I work with</span>
       </h2>
-      <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-        Get notified when I publish something new, and unsubscribe at any time.
-      </p>
-      <div className="mt-6 flex">
-        <input
-          type="email"
-          placeholder="Email address"
-          aria-label="Email address"
-          required
-          className="min-w-0 flex-auto appearance-none rounded-md border border-zinc-900/10 bg-white px-3 py-[calc(theme(spacing.2)-1px)] shadow-md shadow-zinc-800/5 placeholder:text-zinc-400 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/10 dark:border-zinc-700 dark:bg-zinc-700/[0.15] dark:text-zinc-200 dark:placeholder:text-zinc-500 dark:focus:border-teal-400 dark:focus:ring-teal-400/10 sm:text-sm"
-        />
-        <Button type="submit" className="ml-4 flex-none">
-          Join
-        </Button>
+      {/* <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+      
+      </p> */}
+      <div className="mt-6 flex flex-wrap gap-x-3 gap-y-2">
+        {techLogosArray.map((techLogo) => (
+          <div key={techLogo.tech}>{techLogo.logo}</div>
+        ))}
       </div>
-    </form>
+    </div>
   )
 }
 

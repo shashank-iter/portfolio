@@ -1,0 +1,64 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+
+export const meta = {
+  author: 'Shashank Pandey',
+  date: '2024-02-15',
+  title: 'The Most Hated Algorithm in Web Development',
+  description:
+    'Understanding the Abstract Equality Comparison Algorithm in JavaScript.',
+}
+
+export default (props) => <ArticleLayout meta={meta} {...props} />
+
+## The Abstract Equality Comparison Algorithm in JavaScript
+
+**The algorithm that decides the result of `(a == b)`**
+
+> *Warning: long post. Continue only if you are interested in JavaScript.*
+
+There are many reasons to love JavaScript, but if you hate it, I am pretty sure this is a big reason. JavaScript's equality comparison algorithm is a puzzle with a few rules, and it can lead to some unexpected results if you're not careful.
+
+Today, let's dive into the details of JavaScript's type comparison rules. The ECMAScript specification defines the rules that JavaScript engines follow when comparing different types.
+
+### The Algorithm:
+
+1. If `Type(x)` is the same as `Type(y)`, then:
+   - If `Type(x)` is `Undefined`, return `true`.
+   - If `Type(x)` is `Null`, return `true`.
+   - If `Type(x)` is `Number`, then:
+     - If `x` is `NaN`, return `false`.
+     - If `y` is `NaN`, return `false`.
+     - If `x` is the same number value as `y`, return `true`.
+     - If `x` is `+0` and `y` is `-0`, return `true`.
+     - If `x` is `-0` and `y` is `+0`, return `true`.
+     - Otherwise, return `false`.
+   - If `Type(x)` is `String`, return `true` if `x` and `y` are exactly the same sequence of characters. Otherwise, return `false`.
+   - If `Type(x)` is `Boolean`, return `true` if `x` and `y` are both `true` or both `false`. Otherwise, return `false`.
+   - If `x` and `y` refer to the same object, return `true`. Otherwise, return `false`.
+2. If `x` is `null` and `y` is `undefined`, return `true`.
+3. If `x` is `undefined` and `y` is `null`, return `true`.
+4. If `Type(x)` is `Number` and `Type(y)` is `String`, return the result of the comparison `x == ToNumber(y)`.
+5. If `Type(x)` is `String` and `Type(y)` is `Number`, return the result of the comparison `ToNumber(x) == y`.
+6. If `Type(x)` is `Boolean`, return the result of the comparison `ToNumber(x) == y`.
+7. If `Type(y)` is `Boolean`, return the result of the comparison `x == ToNumber(y)`.
+8. If `Type(x)` is either `String` or `Number` and `Type(y)` is `Object`, return the result of the comparison `x == ToPrimitive(y)`.
+9. If `Type(x)` is `Object` and `Type(y)` is either `String` or `Number`, return the result of the comparison `ToPrimitive(x) == y`.
+10. Return `false`.
+
+### Why is This Important?
+
+Understanding these rules is crucial for writing reliable JavaScript code, as it can save you from subtle bugs. 
+
+### Example Pitfalls
+
+```javascript
+console.log(0 == '0');   // true (String gets converted to Number)
+console.log(false == ''); // true (Both converted to 0)
+console.log([] == 0);    // true (Array converted to empty string, then to 0)
+console.log(null == undefined); // true
+console.log({} == '[object Object]'); // false
+```
+
+If you're curious or have questions about type comparison in JavaScript, don't hesitate to reach out! Let's learn together.
+
+All thanks to **Kyle Simpson** and his book *You Don't Know JS* (YDKJS) for explaining this concept beautifully and guiding us through the good, bad, and ugly sides of the language.
