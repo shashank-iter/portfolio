@@ -44,7 +44,7 @@ export default function About() {
         <title>About - Shashank Pandey</title>
         <meta
           name="description"
-          content="I’m Spencer Sharp. I live in New York City, where I design the future."
+          content="I’m Shashank Pandey. I’m a software developer based in India."
         />
       </Head>
       <Container className="mt-16 sm:mt-32">
