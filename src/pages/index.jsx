@@ -351,9 +351,7 @@ export default function Home({ articles }) {
   return (
     <>
       <Head>
-        <title>
-          Shashank Pandey - Software developer, builder, and amateur storyteller
-        </title>
+        <title>Software developer, builder, and project manager.</title>
         <meta
           name="description"
           content="I’m Shashank, a software developer and project manager based in
