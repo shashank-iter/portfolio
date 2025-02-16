@@ -1,0 +1,220 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+
+export const meta = {
+  author: 'Shashank Pandey',
+  date: '2025-02-16',
+  title: 'How to make mdx based blogs in Next JS',
+  description: 'Making a Markdown (mdx) based blog in Next JS',
+}
+
+export default (props) => <ArticleLayout meta={meta} {...props} />
+
+# How to Build an MDX-Based Blog in Next.js
+
+MDX allows you to write JSX inside Markdown, making it perfect for a Next.js blog. In this guide, we will build a blog system that reads MDX files from the frontend, renders them dynamically, and applies custom styling.
+
+We can basically have a static JSON based data on the frontend and use it to render the blog, but that's not scalable, thats why .mdx file based blogs are the best option.
+
+## **1. Project Structure**
+
+Ensure your project has the following structure:
+
+```
+my-nextjs-blog/
+│── pages/
+│   ├── blogs/
+│   │   ├── [slug].js  # Dynamic blog page
+│   │   ├── index.js   # Blog listing page
+│── components/
+│   ├── MDXComponents.js # Custom MDX components
+│── public/
+│   ├── images/   # Store blog banner images
+│── content/
+│   ├── example-blog.mdx  # Blog posts in MDX format
+│── styles/
+│   ├── blog.module.css  # Blog styling
+│── next.config.js
+│── package.json
+```
+
+## **2. Install Required Packages**
+
+Run the following command:
+
+```bash
+npm install next-mdx-remote gray-matter remark-gfm
+```
+
+- `next-mdx-remote`: Helps render MDX files dynamically.
+- `gray-matter`: Parses frontmatter metadata.
+- `remark-gfm`: Enables GitHub-flavored Markdown.
+
+## **3. Configure MDX Processing**
+
+Create a `lib/blogs.js` file to load and process MDX files:
+
+```js
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
+import { serialize } from 'next-mdx-remote/serialize'
+
+const contentDir = path.join(process.cwd(), 'content')
+
+export function getBlogSlugs() {
+  return fs.readdirSync(contentDir)
+}
+
+export async function getBlogBySlug(slug) {
+  const fullPath = path.join(contentDir, `${slug}.mdx`)
+  const fileContents = fs.readFileSync(fullPath, 'utf8')
+  const { data, content } = matter(fileContents)
+  const mdxSource = await serialize(content)
+
+  return { source: mdxSource, frontmatter: data }
+}
+```
+
+## **4. Create the Blog Listing Page**
+
+Inside `pages/blogs/index.js`:
+
+```js
+import Link from 'next/link'
+import { getBlogSlugs } from '../../lib/blogs'
+
+export async function getStaticProps() {
+  const slugs = getBlogSlugs().map((file) => file.replace('.mdx', ''))
+  return { props: { slugs } }
+}
+
+export default function BlogList({ slugs }) {
+  return (
+    <div>
+      <h1>Latest Blog Posts</h1>
+      <ul>
+        {slugs.map((slug) => (
+          <li key={slug}>
+            <Link href={`/blogs/${slug}`}>{slug.replace('-', ' ')}</Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+```
+
+## **5. Create the Blog Detail Page**
+
+Inside `pages/blogs/[slug].js`:
+
+```js
+import { getBlogBySlug, getBlogSlugs } from '../../lib/blogs'
+import { MDXRemote } from 'next-mdx-remote'
+import styles from '../../styles/blog.module.css'
+
+export async function getStaticProps({ params }) {
+  const blog = await getBlogBySlug(params.slug)
+  return { props: blog }
+}
+
+export async function getStaticPaths() {
+  const slugs = getBlogSlugs().map((file) => file.replace('.mdx', ''))
+  return { paths: slugs.map((slug) => ({ params: { slug } })), fallback: false }
+}
+
+export default function BlogPage({ source, frontmatter }) {
+  return (
+    <div className={styles.blogContainer}>
+      <img
+        src={frontmatter.banner}
+        alt={frontmatter.title}
+        className={styles.bannerImage}
+      />
+      <h1 className={styles.blogTitle}>{frontmatter.title}</h1>
+      <div className={styles.blogContent}>
+        <MDXRemote {...source} />
+      </div>
+    </div>
+  )
+}
+```
+
+## **6. Example MDX Blog Post**
+
+Create `content/example-blog.mdx`:
+
+```md
+---
+title: 'Example Blog Post'
+date: '2025-02-15'
+banner: '/images/example-banner.jpg'
+---
+
+<img src="/images/example-banner.jpg" alt="Example Blog Banner" width="100%" />
+
+# Example Blog Post
+
+This is an MDX-based blog post in Next.js.
+
+## Benefits of MDX
+
+- Write JSX inside Markdown
+- Reuse React components
+- Enhanced styling control
+
+## Conclusion
+
+MDX makes blogging in Next.js powerful and flexible!
+```
+
+## **7. Style the Blog Pages**
+
+Create `styles/blog.module.css`:
+
+```css
+.blogContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.bannerImage {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.blogTitle {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.blogContent {
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+```
+
+## **8. Run Your Blog**
+
+Start your Next.js development server:
+
+```bash
+npm run dev
+```
+
+Visit `http://localhost:3000/blogs` to see your blog in action!
+
+## **Final Thoughts**
+
+By following this guide, you have successfully built an MDX-powered blog in Next.js. You can now create content-rich blogs with JSX components, custom styling, and static generation for blazing-fast performance.
+
+For more enhancements, consider adding:
+
+- Pagination for the blog list
+- Tags and categories
+- A CMS for easier content management
+
+**Happy coding! 🚀**
