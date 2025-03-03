@@ -1,17 +1,25 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { runsData1, runsData2, runsData3, legendData } from '@/data'
 
-const WagonWheel = ({ radius = 200 }) => {
+const WagonWheel = () => {
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== 'undefined' ? window.innerWidth : 600
+  )
+  const radius = Math.min(windowWidth * 0.4, 240)
   const [showFieldLabel, setShowFieldLabel] = useState(true)
   const [showFieldAreaMarker, setShowFieldAreaMarker] = useState(true)
-  const [runDataSets, setRunDataSets] = useState([
-    runsData1,
-    runsData2,
-    runsData3,
-  ])
+  const [runDataSets] = useState([runsData1, runsData2, runsData3])
   const [runDataIndex, setRunDataIndex] = useState(0)
   const [runsToShow, setRunsToShow] = useState([1, 2, 3, 4, 5, 6])
+  const [animationTrigger, setAnimationTrigger] = useState(0)
+
+  // Responsive window resize handler
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const calculateLineProps = (runs, angle, initalLength) => {
     const radians = (angle * Math.PI) / 180
@@ -34,6 +42,10 @@ const WagonWheel = ({ radius = 200 }) => {
         length = radius - 1.1
         color = 'blue'
         break
+      case 5:
+        length = initalLength >= radius ? radius / 2 : initalLength
+        color = 'cyan'
+        break
       case 6:
         length = radius - 1.1
         color = 'red'
@@ -47,12 +59,13 @@ const WagonWheel = ({ radius = 200 }) => {
       x2: radius + length * Math.cos(radians),
       y2: radius - length * Math.sin(radians),
       color,
+      length,
+      radians,
     }
   }
 
   function runFilter(runsToShow, runsData) {
-    runsData = runsData.filter((run) => runsToShow.includes(run.runs))
-    return runsData
+    return runsData.filter((run) => runsToShow.includes(run.runs))
   }
 
   const sectionAngles = Array.from({ length: 8 }, (_, i) => i * 45)
@@ -68,12 +81,33 @@ const WagonWheel = ({ radius = 200 }) => {
   ]
 
   return (
-    <div className="w-full">
+    <div className="w-full px-2 sm:px-4">
+      <div className="my-10 flex w-full flex-col items-start rounded-md bg-gray-100 p-4  shadow-md">
+        <h2 className="mb-4 text-lg font-semibold">Legend</h2>
+        <ul className="flex flex-row flex-wrap gap-2 space-y-2">
+          {legendData.map((item, index) => (
+            <li key={index} className="flex items-center gap-x-3">
+              <div
+                className={`h-6 w-6 rounded-full ${item.color}`}
+                style={{
+                  border: '1px solid black',
+                }}
+              ></div>
+              <span className="text-sm font-medium text-gray-800">
+                {item.label}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
       <div className="flex items-center justify-center">
-        <div className="relative ">
+        <div
+          className="relative"
+          style={{ width: `${2 * radius}px`, height: `${2 * radius}px` }}
+        >
           {/* Outer Circle */}
           <div
-            className="rounded-full border-4 border-solid border-green-600 bg-green-600 "
+            className="rounded-full border-4 border-solid border-green-600 bg-green-600"
             style={{
               width: `${2 * radius}px`,
               height: `${2 * radius}px`,
@@ -110,14 +144,31 @@ const WagonWheel = ({ radius = 200 }) => {
           >
             {runFilter(runsToShow, runDataSets[runDataIndex]).map(
               ({ runs, angle, length }, index) => {
-                const { x2, y2, color } = calculateLineProps(
-                  runs,
-                  angle,
-                  length
+                const {
+                  x2,
+                  y2,
+                  color,
+                  length: calculatedLength,
+                  radians,
+                } = calculateLineProps(runs, angle, length)
+                const lineLength = Math.sqrt(
+                  Math.pow(x2 - radius, 2) + Math.pow(y2 - radius, 2)
                 )
+
+                console.log(
+                  'radius',
+                  radius,
+                  'length',
+                  length,
+                  'x2',
+                  x2,
+                  'y2',
+                  y2
+                )
+
                 return (
                   <line
-                    key={index}
+                    key={`${index}-${animationTrigger}`}
                     x1={radius}
                     y1={radius}
                     x2={x2}
@@ -126,6 +177,9 @@ const WagonWheel = ({ radius = 200 }) => {
                     strokeWidth="3"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    strokeDasharray={lineLength}
+                    strokeDashoffset={lineLength}
+                    className="animate-draw"
                   />
                 )
               }
@@ -154,20 +208,9 @@ const WagonWheel = ({ radius = 200 }) => {
             {/* Section Labels */}
             {showFieldLabel &&
               sectionAngles.map((angle, index) => {
-                const radians = ((angle + 22.5) * Math.PI) / 180 // Offset by half a section for centering
-                const x = radius + radius * 0.75 * Math.cos(radians) // Adjust distance from center
+                const radians = ((angle + 22.5) * Math.PI) / 180
+                const x = radius + radius * 0.75 * Math.cos(radians)
                 const y = radius - radius * 0.75 * Math.sin(radians)
-                {
-                  /* console.log(
-                  'Angle:',
-                  angle,
-                  'X:',
-                  angle,
-                  x,
-                  index,
-                  sectionNames[index]
-                ) */
-                }
 
                 return (
                   <text
@@ -178,7 +221,7 @@ const WagonWheel = ({ radius = 200 }) => {
                     fontSize="12"
                     textAnchor="middle"
                     dominantBaseline="middle"
-                    className="font-bold"
+                    className="text-[8px] font-normal sm:text-xs md:text-sm"
                   >
                     {sectionNames[index]}
                   </text>
@@ -188,180 +231,67 @@ const WagonWheel = ({ radius = 200 }) => {
         </div>
       </div>
       <div className="mt-10 flex w-full flex-col gap-x-2 gap-y-4 p-4 md:flex-row">
-        <div className="flex w-64 flex-col items-start rounded-md bg-gray-100 p-4 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold">Legend</h2>
-          <ul className="space-y-2">
-            {legendData.map((item, index) => (
-              <li key={index} className="flex items-center space-x-3">
-                {/* Color Indicator */}
-                <div
-                  className={`h-6 w-6 rounded-full ${item.color}`}
-                  style={{
-                    border: '1px solid black',
-                  }}
-                ></div>
-                {/* Label */}
-                <span className="text-sm font-medium text-gray-800">
-                  {item.label}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
         <div className="w-full rounded-md border border-gray-300 p-4">
-          <h2 className="mb-4 text-lg font-semibold text-black dark:text-white">
-            Configuration
+          <h2 className="mb-4 flex justify-between text-lg font-semibold text-black dark:text-white">
+            Configuration{' '}
+            <button
+              type="button"
+              className=" w-fit rounded-lg bg-blue-700 px-5 py-1 text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              onClick={() => {
+                setRunDataIndex(Math.floor(Math.random() * 3))
+                setAnimationTrigger((prev) => prev + 1)
+              }}
+            >
+              Shuffle Data
+            </button>
           </h2>
-          <div className="grid grid-cols-1 space-y-2 md:grid-cols-3">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             <div className="flex flex-row items-center gap-x-1">
               <input
                 type="checkbox"
-                defaultValue={showFieldLabel}
                 className="h-4 w-4"
                 checked={showFieldLabel}
                 onChange={() => setShowFieldLabel(!showFieldLabel)}
               />
               <label className="text-sm font-medium text-gray-800 dark:text-white">
-                Show Field Labels
+                Field Labels
               </label>
             </div>
             <div className="flex flex-row items-center gap-x-1">
               <input
                 type="checkbox"
-                defaultValue={showFieldAreaMarker}
                 className="h-4 w-4"
                 checked={showFieldAreaMarker}
                 onChange={() => setShowFieldAreaMarker(!showFieldAreaMarker)}
               />
               <label className="text-sm font-medium text-gray-800 dark:text-white">
-                Show Field Area Markers
+                Area Markers
               </label>
             </div>
-            <div className="flex flex-row items-center gap-x-1">
-              <input
-                type="checkbox"
-                defaultValue={runsToShow.includes(1)}
-                className="h-4 w-4"
-                checked={runsToShow.includes(1)}
-                onChange={() => {
-                  if (runsToShow.includes(1)) {
-                    setRunsToShow(runsToShow.filter((run) => run !== 1))
-                  } else {
-                    setRunsToShow([...runsToShow, 1])
-                  }
-                }}
-              />
-              <label className="text-sm font-medium text-gray-800 dark:text-white">
-                Show 1&apos;s
-              </label>
-            </div>
-
-            <div className="flex flex-row items-center gap-x-1">
-              <input
-                type="checkbox"
-                defaultValue={runsToShow.includes(2)}
-                className="h-4 w-4"
-                checked={runsToShow.includes(2)}
-                onChange={() => {
-                  if (runsToShow.includes(2)) {
-                    setRunsToShow(runsToShow.filter((run) => run !== 2))
-                  } else {
-                    setRunsToShow([...runsToShow, 2])
-                  }
-                }}
-              />
-              <label className="text-sm font-medium text-gray-800 dark:text-white">
-                Show 2&apos;s
-              </label>
-            </div>
-
-            <div className="flex flex-row items-center gap-x-1">
-              <input
-                type="checkbox"
-                defaultValue={runsToShow.includes(3)}
-                className="h-4 w-4"
-                checked={runsToShow.includes(3)}
-                onChange={() => {
-                  if (runsToShow.includes(3)) {
-                    setRunsToShow(runsToShow.filter((run) => run !== 3))
-                  } else {
-                    setRunsToShow([...runsToShow, 3])
-                  }
-                }}
-              />
-              <label className="text-sm font-medium text-gray-800 dark:text-white">
-                Show 3&apos;s
-              </label>
-            </div>
-
-            <div className="flex flex-row items-center gap-x-1">
-              <input
-                type="checkbox"
-                defaultValue={runsToShow.includes(4)}
-                className="h-4 w-4"
-                checked={runsToShow.includes(4)}
-                onChange={() => {
-                  if (runsToShow.includes(4)) {
-                    setRunsToShow(runsToShow.filter((run) => run !== 4))
-                  } else {
-                    setRunsToShow([...runsToShow, 4])
-                  }
-                }}
-              />
-              <label className="text-sm font-medium text-gray-800 dark:text-white">
-                Show 4&apos;s
-              </label>
-            </div>
-
-            <div className="flex flex-row items-center gap-x-1">
-              <input
-                type="checkbox"
-                defaultValue={runsToShow.includes(5)}
-                className="h-4 w-4"
-                checked={runsToShow.includes(5)}
-                onChange={() => {
-                  if (runsToShow.includes(5)) {
-                    setRunsToShow(runsToShow.filter((run) => run !== 5))
-                  } else {
-                    setRunsToShow([...runsToShow, 5])
-                  }
-                }}
-              />
-              <label className="text-sm font-medium text-gray-800 dark:text-white">
-                Show 5&apos;s
-              </label>
-            </div>
-
-            <div className="flex flex-row items-center gap-x-1">
-              <input
-                type="checkbox"
-                defaultValue={runsToShow.includes(6)}
-                className="h-4 w-4"
-                checked={runsToShow.includes(6)}
-                onChange={() => {
-                  if (runsToShow.includes(6)) {
-                    setRunsToShow(runsToShow.filter((run) => run !== 6))
-                  } else {
-                    setRunsToShow([...runsToShow, 6])
-                  }
-                }}
-              />
-              <label className="text-sm font-medium text-gray-800 dark:text-white">
-                Show 6&apos;s
-              </label>
-            </div>
-            <div>
-              <button
-                type="button"
-                className="mb-2 mr-2 rounded-lg bg-blue-700 px-5 py-1 text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                onClick={() => {
-                  // shuffle runDataIndex between values 0 to 2
-                  setRunDataIndex(Math.floor(Math.random() * 3))
-                }}
+            {[1, 2, 3, 4, 5, 6].map((runValue) => (
+              <div
+                key={runValue}
+                className="flex flex-row items-center gap-x-1"
               >
-                Shuffle Data
-              </button>
-            </div>
+                <input
+                  type="checkbox"
+                  className="h-4 w-4"
+                  checked={runsToShow.includes(runValue)}
+                  onChange={() => {
+                    if (runsToShow.includes(runValue)) {
+                      setRunsToShow(
+                        runsToShow.filter((run) => run !== runValue)
+                      )
+                    } else {
+                      setRunsToShow([...runsToShow, runValue])
+                    }
+                  }}
+                />
+                <label className="text-sm font-medium text-gray-800 dark:text-white">
+                  {runValue}&apos;s
+                </label>
+              </div>
+            ))}
           </div>
         </div>
       </div>
