@@ -53,6 +53,26 @@ const projects = [
     },
     logo: GitHubIcon,
   },
+  {
+    name: 'Cricket Wagon Wheel',
+    description:
+      'A tool to visualize runs scored in each direction on cricket field.',
+    link: {
+      href: 'https://pandeyshashank.vercel.app/work/wagon-wheel',
+      label: 'work/wagon-wheel',
+    },
+    logo: GitHubIcon,
+  },
+  {
+    name: 'HRMS Dashboard',
+    description:
+      'HRMS Dashboard UI made for an assignment. Desktop responsive only.',
+    link: {
+      href: 'https://assignment-pravi.vercel.app/',
+      label: 'assignment-pravi.vercel.app/',
+    },
+    logo: GitHubIcon,
+  },
 ]
 
 function LinkIcon(props) {
