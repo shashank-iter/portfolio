@@ -2,6 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import { runsData1, runsData2, runsData3, legendData } from '@/data'
 import toast from 'react-hot-toast'
+import useScreenWidth from '@/hooks/useScreenWidth'
 
 const WagonWheel = ({ radius, setRadius }) => {
   const [showFieldLabel, setShowFieldLabel] = useState(true)
@@ -10,25 +11,13 @@ const WagonWheel = ({ radius, setRadius }) => {
   const [runDataIndex, setRunDataIndex] = useState(0)
   const [runsToShow, setRunsToShow] = useState([1, 2, 3, 4, 5, 6])
   const [animationTrigger, setAnimationTrigger] = useState(0)
-  const [windowWidth, setWindowWidth] = useState(
-    typeof window !== 'undefined' ? window.innerWidth : 600
-  )
-
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth)
-    }
-
-    if (typeof window !== 'undefined') {
-      window.addEventListener('resize', handleResize)
-      return () => window.removeEventListener('resize', handleResize)
-    }
-  }, [])
 
   const handleNextIndex = () => {
     setRunDataIndex((prevIndex) => (prevIndex + 1) % 3)
     setAnimationTrigger((prev) => prev + 1)
   }
+
+  const windowWidth = useScreenWidth()
 
   // Responsive window resize handler
 
@@ -265,7 +254,7 @@ const WagonWheel = ({ radius, setRadius }) => {
               type="button"
               className=" w-fit rounded-lg bg-blue-700 px-5 py-1 text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300  disabled:bg-slate-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               onClick={() => {
-                if (windowWidth <= 400 && radius >= 180) {
+                if (windowWidth <= 600 && radius >= 180) {
                   toast("You can't zoom in more for mobile screen!")
                   return
                 }
