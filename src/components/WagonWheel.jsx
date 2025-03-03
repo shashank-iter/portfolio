@@ -263,14 +263,14 @@ const WagonWheel = ({ radius, setRadius }) => {
             </button>
             <button
               type="button"
-              className=" w-fit rounded-lg bg-blue-700 px-5 py-1 text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 disabled:bg-slate-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              disabled={radius >= 300}
+              className=" w-fit rounded-lg bg-blue-700 px-5 py-1 text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300  disabled:bg-slate-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               onClick={() => {
                 if (windowWidth <= 400 && radius >= 180) {
                   toast("You can't zoom in more for mobile screen!")
                   return
                 }
                 if (radius >= 300) {
+                  toast("You can't zoom in more!")
                   return
                 } else {
                   setRadius(radius + 10)
@@ -281,10 +281,10 @@ const WagonWheel = ({ radius, setRadius }) => {
             </button>
             <button
               type="button"
-              className=" w-fit rounded-lg bg-blue-700 px-5 py-1 text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 disabled:bg-slate-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              disabled={radius <= 150}
+              className=" w-fit rounded-lg bg-blue-700 px-5 py-1 text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300  dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               onClick={() => {
                 if (radius <= 150) {
+                  toast("You can't zoom out more!")
                   return
                 } else {
                   setRadius(radius - 10)
