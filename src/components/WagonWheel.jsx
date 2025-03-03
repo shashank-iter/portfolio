@@ -84,7 +84,7 @@ const WagonWheel = ({ radius, setRadius }) => {
     <div className="w-full px-2 sm:px-4">
       <div className="my-10 flex w-full flex-col items-start rounded-md bg-gray-100 p-4  shadow-md">
         <h2 className="mb-4 text-lg font-semibold">Legend</h2>
-        <ul className="flex flex-row flex-wrap gap-2 space-y-2">
+        <ul className="flex flex-row flex-wrap gap-2 ">
           {legendData.map((item, index) => (
             <li key={index} className="flex items-center gap-x-3">
               <div
