@@ -2,11 +2,11 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import { runsData1, runsData2, runsData3, legendData } from '@/data'
 
-const WagonWheel = () => {
+const WagonWheel = ({ radius = 150 }) => {
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== 'undefined' ? window.innerWidth : 600
   )
-  const radius = windowWidth < 600 ? 150 : 250
+  // const [radius, setRadius] = useState(windowWidth < 600 ? 150 : 250)
   const [showFieldLabel, setShowFieldLabel] = useState(true)
   const [showFieldAreaMarker, setShowFieldAreaMarker] = useState(true)
   const [runDataSets] = useState([runsData1, runsData2, runsData3])
@@ -19,6 +19,9 @@ const WagonWheel = () => {
     setAnimationTrigger((prev) => prev + 1)
   }
 
+  // useEffect(() => {
+  //   setRadius(windowWidth < 600 ? 150 : 250)
+  // }, [windowWidth])
   // Responsive window resize handler
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth)
@@ -86,7 +89,7 @@ const WagonWheel = () => {
   ]
 
   return (
-    windowWidth && (
+    radius && (
       <div className="w-full px-2 sm:px-4">
         <div className="my-10 flex w-full flex-col items-start rounded-md bg-gray-100 p-4  shadow-md">
           <h2 className="mb-4 text-lg font-semibold">Legend</h2>
