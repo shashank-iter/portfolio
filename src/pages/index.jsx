@@ -14,13 +14,14 @@ import {
 } from '@/components/SocialIcons'
 import image1 from '@/images/photos/image-1.jpg'
 import image2 from '@/images/photos/image-2.jpg'
-import image3 from '@/images/photos/image-3.jpg'
+import image3 from '@/images/photos/image-6.jpg'
 import image4 from '@/images/photos/image-4.jpg'
 import image5 from '@/images/photos/image-5.jpg'
 import logoResellpur from '@/images/logos/resellpur.png'
 import logoMicrosoft from '@/images/logos/microsoft.png'
 import logoSkillvalley from '@/images/logos/skillvalley.png'
 import logoShowEra from '@/images/logos/showera.png'
+import logoPraavi from '@/images/logos/praavi.jpeg'
 import { generateRssFeed } from '@/lib/generateRssFeed'
 import { getAllArticles } from '@/lib/getAllArticles'
 import { formatDate } from '@/lib/formatDate'
@@ -229,14 +230,28 @@ function Newsletter() {
 function Resume() {
   let resume = [
     {
-      company: 'Resellpur',
-      title: 'Frontend Developer',
-      logo: logoResellpur,
-      start: 'Sep 2024',
+      company: 'Microsoft',
+      title: 'Project Manager',
+      logo: logoMicrosoft,
+      start: 'Aug 2025',
       end: {
         label: 'Present',
         dateTime: new Date().getFullYear(),
       },
+    },
+    {
+      company: 'Praavi',
+      title: 'SDE Intern',
+      logo: logoPraavi,
+      start: 'April 2025',
+      end: 'July 2025',
+    },
+    {
+      company: 'Resellpur',
+      title: 'Frontend Developer',
+      logo: logoResellpur,
+      start: 'Sep 2024',
+      end: 'April 2025'
     },
     {
       company: 'Microsoft',
@@ -309,7 +324,7 @@ function Resume() {
         ))}
       </ol>
       <Button
-        href="https://drive.google.com/file/d/1srKLCQKlxrnHSzGsOJAvYcokXZPkkiAy/view?usp=sharing"
+        href="https://drive.google.com/file/d/1Oki5Y-sa_X4yGe535ErwSO7f5z-UKWyH/view?usp=sharing"
         variant="secondary"
         className="group mt-6 w-full"
       >
